@@ -20,6 +20,7 @@
         <div class="menu">
             <a id = "home" href="#">Home</a>
             <a id = "Favorite" href="#">Favorite</a>
+            <a id = "Addbook" href="#">Add Book</a>
             <a id = "SignIn" href="#">Sign In</a>
             <a id = "SignUp" href="#">Sign Up</a> 
             <a id = "SignOut" href="#">Sign Out</a> 
@@ -28,11 +29,12 @@
     </div>
 
     <div class="login-form">
-        <label for="username">Username :</label>
+        <label for="username-login">Username :</label>
         <input type="text" id="username-login">
-        <label for="pass">Password :</label>
+        <label for="pass-login">Password :</label>
         <input type="password" id="pass-login">
-        <input id = "btn-login" type="submit" value="login">
+        <input onclick = "loginAcc()" id = "btn-login" type="submit" value="login">
+        <p id="result">welcome to login</p>
     </div>
 
     <div class="signup-form">
@@ -42,7 +44,8 @@
         <input type="text" id="mail-signup">
         <label for="password">Password :</label>
         <input type="text" id="pass-signup">
-        <input id = "btn-Rigstry" type="submit" value="Rigstry">
+        <input onclick = "addNewAccount()" id = "btn-Rigstry" type="submit" value="Rigstry">
+        <p>welcome to Create Account</p>
     </div>
 
     <div class="container" id = "Favoritelist">
@@ -61,6 +64,20 @@
 
     </div>
 </div>
+
+
+    <div class="form-addbook">
+        <label for="url-image">Image Url :</label>
+        <input type="text" id="url-image">
+        <label for="author">author :</label>
+        <input type="text" id="author">
+        <label for="description">description :</label>
+        <input type="text" id="description">
+        <label for="price">price :</label>
+        <input type="text" id="price">
+        <input onclick = "addBook()" id = "btn-addbook" type="submit" value="Add Book">
+    </div>
+
 
     
 
