@@ -1,0 +1,9 @@
+make account from sign up 
+
+username : admin
+mail : admin@a.xx
+password : admin
+
+after that sign in :
+username : admin
+password : admin
