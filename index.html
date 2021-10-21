@@ -23,16 +23,15 @@
             <a id = "Addbook" href="#">Add Book</a>
             <a id = "SignIn" href="#">Sign In</a>
             <a id = "SignUp" href="#">Sign Up</a> 
-            <a id = "SignOut" href="#">Sign Out</a> 
+            <a onclick="signOut()" id = "SignOut" href="#">Sign Out</a> 
         </div>  
-        
     </div>
 
     <div class="login-form">
         <label for="username-login">Username :</label>
         <input type="text" id="username-login">
         <label for="pass-login">Password :</label>
-        <input type="password" id="pass-login">
+        <input id="pass-login">
         <input onclick = "loginAcc()" id = "btn-login" type="submit" value="login">
         <p id="result">welcome to login</p>
     </div>

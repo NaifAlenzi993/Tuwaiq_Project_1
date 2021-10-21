@@ -77,6 +77,11 @@ let Books = [
   },
 ];
 
+// if (localStorage["bookLike"] !== null) {
+// let ppp = JSON.parse(localStorage["bookLike"])
+// console.log(ppp);
+// }
+
 let bookLike = [];
 
 let mainItems = $("#items");
@@ -86,10 +91,18 @@ let navbarSelect = document.querySelectorAll("#navVar1 a");
 
 let transTime = 150;
 
+let users = [
+  {
+    username: "admin",
+    mail: "admin@admin.cc",
+    pass: "admin",
+    admin: true,
+    fav: bookLike,
+  },
+];
+let userOnline = [];
 
-let users = [{username: "admin" , mail: "admin@admin.cc" , pass: "admin" , admin: true , fav : bookLike}]
-let userOnline = []
-
+// console.log(localStorage.bookLike.color);
 
 function mkHtmlFromArr(array, DivSelect, ShowX = false) {
   let codeX = "";
@@ -114,7 +127,31 @@ function mkHtmlFromArr(array, DivSelect, ShowX = false) {
   }
 }
 
-mkHtmlFromArr(Books, mainItems, true);
+// console.log(localStorage.userOnline);
+if (localStorage.userOnline == null) {
+  mkHtmlFromArr(bookLike, mainItemsF);
+  mkHtmlFromArr(Books, mainItems);
+} else {
+  $("#SignOut").show();
+  $("#SignOut").css("color", "red");
+
+  $("#SignIn").hide();
+  $("#SignUp").hide();
+  $("#Addbook").show();
+  $("#bookslist").css("display", "flex");
+  $(".signup-form").hide(transTime);
+  $(".login-form").hide(transTime);
+  $(".form-addbook").hide(transTime);
+  $("#Favoritelist").hide(transTime);
+
+  let ooo = JSON.parse(localStorage.userOnline);
+  console.log(ooo);
+
+  mainItems.html("");
+  // console.log(localStorage.userOnline);
+  mkHtmlFromArr(Books, mainItems, true);
+  mkHtmlFromArr(bookLike, mainItemsF);
+}
 
 function Clear() {
   document.querySelector(".login-form #username-login").value = "";
@@ -128,7 +165,6 @@ function Clear() {
   document.querySelector(".form-addbook #author").value = "";
   document.querySelector(".form-addbook #description").value = "";
   document.querySelector(".form-addbook #price").value = "";
-  
 }
 
 //event function btn
@@ -171,7 +207,6 @@ $("#SignUp").click(function () {
   Clear();
 });
 
-
 $("#Favorite").click(function () {
   $("#bookslist").hide(transTime);
   $(".signup-form").hide(transTime);
@@ -182,36 +217,49 @@ $("#Favorite").click(function () {
   Clear();
 });
 
-
-
-
 // Add like Book + change color icon
 let selectElementHome = document.querySelectorAll("#items");
 
-//delete Element form Home
 selectElementHome.forEach((e) => {
   e.addEventListener("click", (e) => {
     for (i in Books) {
       if ("icon-" + Books[i].idx == e.target.id) {
+        //delete Element form Home & Fav
+
+        bookLike.forEach((element, index) => {
+          if (element.idx == Books[i].idx) {
+            bookLike.splice(index, 1);
+            mainItemsF.html("");
+            mkHtmlFromArr(bookLike, mainItemsF);
+          }
+        });
+
         Books.splice(i, 1);
         mainItems.html("");
+
         mkHtmlFromArr(Books, mainItems, true);
+
         break;
       }
 
       if ("icon-" + Books[i].idf == e.target.id) {
         if (e.target.style.color == "black") {
+          // like
           e.target.style.color = "gold";
           mainItemsF.html("");
           Books[i].color = "gold";
           bookLike.push(Books[i]);
+          localStorage.bookLike = JSON.stringify(bookLike);
           mkHtmlFromArr(bookLike, mainItemsF);
         } else {
           bookLike.forEach((element, index) => {
             if (Books[i].url == element.url) {
+              // Unlike
               bookLike.splice(index, 1);
               mainItemsF.html("");
               mkHtmlFromArr(bookLike, mainItemsF);
+              localStorage.bookLike = "";
+              localStorage.bookLike = JSON.stringify(bookLike);
               e.target.style.color = "black";
               Books[i].color = "black";
             }
@@ -222,104 +270,143 @@ selectElementHome.forEach((e) => {
   });
 });
 
-
 let selectElementF = document.querySelectorAll("#items-f");
 
-selectElementF.forEach((element , i) => {
+selectElementF.forEach((element, i) => {
   element.addEventListener("click", (e) => {
     if (e.target.style.color == "gold") {
-      for(o in bookLike){
-        if ("icon-"+bookLike[o].idf == e.target.id) {
-            let indexOf = Books.indexOf(bookLike[o])
-            Books[indexOf].color = "black";
-            bookLike.splice(o , 1);
-            mainItemsF.html("");
-            mkHtmlFromArr(bookLike, mainItemsF);
+      for (o in bookLike) {
+        if ("icon-" + bookLike[o].idf == e.target.id) {
+          let indexOf = Books.indexOf(bookLike[o]);
+          Books[indexOf].color = "black";
+          bookLike.splice(o, 1);
+          mainItemsF.html("");
+          mkHtmlFromArr(bookLike, mainItemsF);
 
-            mainItems.html("");
-            mkHtmlFromArr(Books, mainItems, true);
+          mainItems.html("");
 
+          mkHtmlFromArr(Books, mainItems, true);
         }
       }
-
     }
   });
 });
 
+function addBook() {
+  let urlImage = document.querySelector(".form-addbook #url-image").value;
+  let authorImage = document.querySelector(".form-addbook #author").value;
+  let descriptionImg = document.querySelector(
+    ".form-addbook #description"
+  ).value;
+  let priceBook = document.querySelector(".form-addbook #price").value;
 
-function addBook(){
-  let urlImage = document.querySelector(".form-addbook #url-image").value ;
-  let authorImage = document.querySelector(".form-addbook #author").value ;
-  let descriptionImg = document.querySelector(".form-addbook #description").value ;
-  let priceBook = document.querySelector(".form-addbook #price").value ;
-  
-  let newBook = {url: urlImage ,
-    author: authorImage , 
+  let newBook = {
+    url: urlImage,
+    author: authorImage,
     description: descriptionImg,
     price: priceBook,
     color: "black",
     idx: rndStr(6),
-    idf: rndStr(6)};
-   
-    Books.push(newBook);
+    idf: rndStr(6),
+  };
 
-    mainItems.html("");
+  Books.push(newBook);
 
-    mkHtmlFromArr(Books, mainItems, true);
+  mainItems.html("");
 
-    Clear();
+  mkHtmlFromArr(Books, mainItems, true);
 
+  Clear();
 }
 
-
-function loginAcc(){
+function loginAcc() {
   let usernameVa = document.querySelector(".login-form #username-login").value;
   let passVa = document.querySelector(".login-form #pass-login").value;
-  let result = $("#result")
- 
+  let result = $("#result");
+
   let localsrotage = localStorage.static;
-  if (localsrotage == null){
-    result.html(`<p id="result"> error 10 </p>`)
-    result.css("color" , "red")
-    return null
+  if (localsrotage == null) {
+    result.html(`<p id="result"> error 10 </p>`);
+    result.css("color", "red");
+    return null;
   }
 
   let staticLocal = JSON.parse(localsrotage);
-  
-  
-  for(i in staticLocal){
-    if (staticLocal[i].username == usernameVa && staticLocal[i].pass == passVa){
-      
-      result.html(`<p id="result"> login in </p>`)
-      result.css("color" , "green")
+
+  for (i in staticLocal) {
+    if (
+      staticLocal[i].username == usernameVa &&
+      staticLocal[i].pass == passVa
+    ) {
+      result.html(`<p id="result"> login in </p>`);
+      result.css("color", "green");
+      userOnline.push(staticLocal);
+
+      $("#SignOut").show();
+      $("#SignOut").css("color", "red");
+
+      $("#SignIn").hide();
+      $("#SignUp").hide();
+      $("#Addbook").show();
+      $("#bookslist").css("display", "flex");
+      $(".signup-form").hide(transTime);
+      $(".login-form").hide(transTime);
+      $(".form-addbook").hide(transTime);
+      $("#Favoritelist").hide(transTime);
+
+      mainItems.html("");
+
+      mkHtmlFromArr(Books, mainItems, true);
+
+      localStorage.userOnline = JSON.stringify(userOnline);
+
+      result.html(`<p id="result"> wlcome to login </p>`);
+      result.css("color", "black");
+
       break;
-    }else{
-      result.html(`<p id = "result" > *error </p>`)
-       result.css("color" , "red")
+    } else {
+      result.html(`<p id = "result" > *error </p>`);
+      result.css("color", "red");
       break;
     }
   }
-  
-
 }
 
-function addNewAccount(){
-  let usernameVar = document.querySelector(".signup-form #username-signup").value;
+function addNewAccount() {
+  let usernameVar = document.querySelector(
+    ".signup-form #username-signup"
+  ).value;
   let mailVar = document.querySelector(".signup-form #mail-signup").value;
   let passVar = document.querySelector(".signup-form #pass-signup").value;
-  
-  let newAccount = {username: usernameVar , mail: mailVar ,  pass: passVar , admin: false , fav: bookLike}
+
+  let newAccount = {
+    username: usernameVar,
+    mail: mailVar,
+    pass: passVar,
+    admin: false,
+    fav: bookLike,
+  };
   users.push(newAccount);
 
   localStorage["static"] = JSON.stringify(users);
-  
-
 }
 
+function signOut() {
+  userOnline = [];
 
-
-
-
+  localStorage.removeItem("userOnline");
+  $("#SignIn").show();
+  $("#SignUp").show();
+  $("#SignOut").hide();
+  $("#Addbook").hide();
+  $("#bookslist").css("display", "flex");
+  $(".signup-form").hide(transTime);
+  $(".login-form").hide(transTime);
+  $(".form-addbook").hide(transTime);
+  $("#Favoritelist").hide(transTime);
+  mainItems.html("");
+  mkHtmlFromArr(Books, mainItems);
+}
 
 // $("#btn-login").click(() => {
 //   let user = document.querySelector(".login-form #username");
@@ -334,6 +421,3 @@ function addNewAccount(){
 //   let mail = document.querySelector(".signup-form #mail");
 //   let pass = document.querySelector(".signup-form #pass");
 // });
-
-
-

@@ -69,7 +69,11 @@ body {
 }
 
 #SignOut{
-  display: none !important;
+  display: none ;
+}
+
+#Addbook{
+  display: none ;
 }
 
 #item1 {
